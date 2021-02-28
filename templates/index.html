@@ -8,6 +8,9 @@
 </head>
 <body>
 <h1>Home plus</h1>
+{% if message %}
+    <h2 id="client_id"> Client_id: {{ message }} </h2>
+{% endif %}
 
 <ul id='ul-text'></ul>
 <input type="text" name="text" id="input-text">
@@ -15,12 +18,15 @@
 
     <script src="https://cdn.socket.io/3.1.1/socket.io.min.js" integrity="sha384-gDaozqUvc4HTgo8iZjwth73C6dDDeOJsAgpxBcMpZYztUfjHXpzrpdrHRdVp8ySO" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8">
+
+        const client_id = document.querySelector('#client_id').innerText;
+        console.log(client_id)
         const ul = document.querySelector('#ul-text')
         const submit = document.querySelector('#button-send')
         const input = document.querySelector('#input-text')
-        const socket = io.connect('http://localhost:5000');
+        const socket = io.connect('http://127.0.0.1:5000');
         socket.on("connect", () => {
-            console.log('connected'); // x8WIv7-mJelg7on_ALbx
+            console.log('connected');
             socket.send({data: 'connected'})
           });
         
