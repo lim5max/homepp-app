@@ -9,7 +9,7 @@
 <body>
 <h1>Home plus</h1>
 {% if message %}
-    <h2 id="client_id"> Client_id: {{ message }} </h2>
+Client_id: <h2 id="client_id">  {{ message }} </h2>
 {% endif %}
 
 <ul id='ul-text'></ul>
@@ -28,6 +28,7 @@
         socket.on("connect", () => {
             console.log('connected');
             socket.send({data: 'connected'})
+            socket.emit('join', {'room': client_id, 'username': 'web-client'})
           });
         
         socket.on('message', (message)=>{
@@ -36,7 +37,13 @@
             ul.append(li)
         })
         submit.addEventListener('click', ()=>{
-            socket.send({data: input.value})
+            socket.emit('room message', {'data': input.value, 'room': client_id})
+        })
+        socket.on('broadcast message', (message)=>{
+            let li = document.createElement('li')
+            li.innerText = message['data']
+            console.log(message)
+            ul.append(li)
         })
     </script>
 </body>

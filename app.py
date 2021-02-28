@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect, request, url_for
-from flask_socketio import SocketIO, emit, send
+from flask_socketio import SocketIO, emit, send, join_room, leave_room
 import pprint
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -32,6 +32,20 @@ def test_connect():
 def message_from_rasberry(data):
     print(pprint.pprint(data))
 
+@socketio.on('join')
+def on_join(data):
+    username = data['username']
+    room = data['room']
+    join_room(room)
+    message = '%s joined %s' % (username, room)
+    emit('broadcast message', {'data': message}, room=room)
+    print('joined')
+
+@socketio.on('leave')
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
 
 @socketio.on('message')
 def handle_message(data):
@@ -40,7 +54,9 @@ def handle_message(data):
 
     send(data['data'])
 
-
+@socketio.on('room message')
+def get_room_mesage(message):
+    emit('broadcast message', {'data': message['data']}, room=message['room'])
 @socketio.on('disconnect')
 def test_disconnect():
     print('Client disconnected')
